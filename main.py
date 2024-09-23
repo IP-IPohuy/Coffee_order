@@ -2,7 +2,7 @@ import sqlite3
 import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-bot = telebot.TeleBot('')
+bot = telebot.TeleBot('7281032997:AAGVZnjWdfJQuZk4NbnuZhc3m_-i02sO39E')
 
 # Подключение к базе данных
 conn = sqlite3.connect('c0ffee-0rder.db', check_same_thread=False)

@@ -1,0 +1,33 @@
+{% extends 'main/layout.html' %}
+
+{% block title %}
+Войти
+{% endblock %}
+
+{% block content %}
+<div class="wrapper">
+    <div class="title"><span>Войти</span></div>
+    <form method="post">
+      {% csrf_token %}
+      {% if error %}
+      {{ error }}
+      {% endif %}
+      
+      <div class="row">
+        <i class="fas fa-user"></i>
+        {{ form.username }}
+      </div>
+      
+      <div class="row">
+        <i class="fas fa-lock"></i>
+        {{ form.password }}
+      </div>
+
+      <div class="row button">
+        <input type="submit" value="Войти">
+      </div>
+
+    </form>
+  </div>
+</div>
+{% endblock %}

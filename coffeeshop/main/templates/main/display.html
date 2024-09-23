@@ -1,0 +1,86 @@
+{% extends 'main/layout.html' %}
+
+{% block title %}
+Homepage
+{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background-color: black;
+        color: white;
+    }
+
+    .orders-container {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .order-box {
+        background-color: white;
+        color: black;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+        width: 200px;
+        text-align: center;
+    }
+
+    .orders-left {
+        flex: 1;
+        margin-right: 20px;
+    }
+
+    .orders-right {
+        flex: 1;
+        margin-left: 20px;
+    }
+
+</style>
+
+<div class="orders-container">
+    <!-- Заказы, которые готовятся (слева) -->
+    <div class="orders-left">
+        <h2>Готовятся:</h2>
+        <div id="orders-in-progress"></div>
+    </div>
+
+    <!-- Готовые заказы (справа) -->
+    <div class="orders-right">
+        <h2>Готовы:</h2>
+        <div id="orders-ready"></div>
+    </div>
+</div>
+
+<script>
+
+function updateOrders() {
+    fetch('{% url "get_orders" %}')
+    .then(response => response.json())
+    .then(data => {
+        // Обновление списка заказов, которые готовятся
+        const ordersInProgressDiv = document.getElementById('orders-in-progress');
+        ordersInProgressDiv.innerHTML = '';
+        data.orders_in_progress.forEach(order => {
+            const orderBox = `<div class="order-box"><p>${order.order_name}</p></div>`;
+            ordersInProgressDiv.innerHTML += orderBox;
+        });
+
+        // Обновление списка готовых заказов
+        const ordersReadyDiv = document.getElementById('orders-ready');
+        ordersReadyDiv.innerHTML = '';
+        data.orders_ready.forEach(order => {
+            const orderBox = `<div class="order-box"><p>${order.order_name}</p></div>`;
+            ordersReadyDiv.innerHTML += orderBox;
+        });
+    });
+}
+
+// Вызывать функцию обновления каждые 1000 мс (1 секунда)
+setInterval(updateOrders, 1000);
+
+// Вызвать её сразу при загрузке страницы
+updateOrders();
+</script>
+
+{% endblock %}
