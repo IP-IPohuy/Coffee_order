@@ -247,6 +247,3 @@ def process_product_deletion(message):
         bot.send_message(chat_id, f"Товар с именем '{product_name}' не найден.")
 
 bot.polling()
-
-def hui:
-    print('hui')
