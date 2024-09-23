@@ -1,0 +1,11 @@
+{% extends 'main/layout.html' %}
+
+{% block title %}
+История заказов
+{% endblock %}
+
+{% block content %}
+{% for completed_order in completed_orders %}
+<p>{{ completed_order.order_name }} Приготовлен:{{ completed_order.time_prepared }} Выдан:{{ completed_order.time_completed }}</p>
+{% endfor %}
+{% endblock %}

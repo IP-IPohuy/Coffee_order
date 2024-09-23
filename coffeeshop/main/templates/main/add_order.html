@@ -1,0 +1,30 @@
+{% extends 'main/layout.html' %}
+
+{% block title %}
+Добавить заказ
+{% endblock %}
+
+{% block content %}
+<h2>Добавить заказ</h2>
+<form method="POST">
+    {% csrf_token %}
+    <label for="order_name">Имя заказа:</label>
+    <input type="text" id="order_name" name="order_name" required>
+
+    <h4>Выберите товары:</h4>
+    <div id="products-container">
+        {% for product in products %}
+        {% if product.stock != 0 %}
+        <div>
+            <label>{{ product.product_name }} ({{ product.product_price }}₽)</label>
+            <input type="number" name="quantities" min="1" value="1">
+            <input type="checkbox" name="products" value="{{ product.id }}">
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+
+    <button type="submit">Создать заказ</button>
+</form>
+<a href="{% url 'worker_panel' %}">Назад к панели</a>
+{% endblock %}

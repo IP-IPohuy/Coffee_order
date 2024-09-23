@@ -1,0 +1,35 @@
+{% extends 'main/layout.html' %}
+{% block title %}
+Спасибо за работу!
+{% endblock %}
+{% block content %}
+<div class="thank-you-container">
+    <h2>Смена успешно завершена</h2>
+    <p>Спасибо за вашу работу! Вы можете выйти из системы, нажав на кнопку ниже.</p>
+    
+    <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="logout-btn">Выйти</button>
+    </form>
+</div>
+
+<style>
+    .thank-you-container {
+        text-align: center;
+        margin-top: 50px;
+    }
+
+    .logout-btn {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    .logout-btn:hover {
+        background-color: #45a049;
+    }
+</style>
+{% endblock %}
