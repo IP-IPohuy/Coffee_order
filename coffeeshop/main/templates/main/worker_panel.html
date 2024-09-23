@@ -34,34 +34,49 @@
 </style>
 <div class="orders-container">
     <h2>Заказы в процессе</h2>
-    {% for order_in_progress in orders_in_progress %}
-    <div class="order-container">
-        <h3>{{ order_in_progress.order_name }}</h3>
-        <p>Статус: {{ order_in_progress.get_order_status_display }}</p>
-        <h4>Содержимое заказа:</h4>
-        <ul>
-            {% for product_in_order in order_in_progress.order_content.all %}
-            <li>{{ product_in_order }}</li>
-            {% endfor %}
-        </ul>
-        <button class="mark-ready" data-order-id="{{ order_in_progress.id }}">Готов</button>
+    <div class="order-container-content">
+        {% for order_in_progress in orders_in_progress %}
+        <div class="order-container">
+            <h3>{{ order_in_progress.order_name }}</h3>
+            <p>Статус: {{ order_in_progress.get_order_status_display }}</p>
+            <h4>Содержимое заказа:</h4>
+            <ul>
+                {% for product_in_order in order_in_progress.order_content.all %}
+                <li>{{ product_in_order }}</li>
+                {% endfor %}
+            </ul>
+            <button class="mark-ready" data-order-id="{{ order_in_progress.id }}">Готов</button>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 
     <h2>Готовые заказы</h2>
-    {% for order_ready in orders_ready %}
-    <div class="order-container">
-        <h3>{{ order_ready.order_name }}</h3>
-        <p>Статус: {{ order_ready.get_order_status_display }}</p>
-        <h4>Содержимое заказа:</h4>
-        <ul>
-            {% for product_in_order in order_ready.order_content.all %}
-            <li>{{ product_in_order }}</li>
-            {% endfor %}
-        </ul>
-        <button class="complete-order" data-order-id="{{ order_ready.id }}">Выдать заказ</button>
+    <div class="order-container-content">
+        {% for order_ready in orders_ready %}
+        <div class="order-container">
+            <h3>{{ order_ready.order_name }}</h3>
+            <p>Статус: {{ order_ready.get_order_status_display }}</p>
+            <h4>Содержимое заказа:</h4>
+            <ul>
+                {% for product_in_order in order_ready.order_content.all %}
+                <li>{{ product_in_order }}</li>
+                {% endfor %}
+            </ul>
+            <button class="complete-order" data-order-id="{{ order_ready.id }}">Выдать заказ</button>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
+    <style>
+        .order-container-content{
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+        }
+        .order-container{
+            min-width: 190px;
+        }
+    </style>
 </div>
 
 <form action="{% url 'logout' %}" method="post">
