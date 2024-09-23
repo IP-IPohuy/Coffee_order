@@ -5,6 +5,33 @@
 {% endblock %}
 
 {% block content %}
+<div class="shift-container">
+    <h2>Активная смена от {{ shift.date|date:"d.m.Y" }}</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="close-shift-btn">Закрыть смену</button>
+    </form>
+</div>
+
+<style>
+    .shift-container {
+        margin: 20px;
+    }
+
+    .close-shift-btn {
+        background-color: #f44336;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    .close-shift-btn:hover {
+        background-color: #d32f2f;
+    }
+</style>
 <div class="orders-container">
     <h2>Заказы в процессе</h2>
     {% for order_in_progress in orders_in_progress %}
@@ -53,6 +80,9 @@
 <a href="{% url 'add_order' %}"><button>Добавить заказ</button></a>
 
 <a href="{% url 'orders_history' %}"><button>Посмотреть историю заказов</button></a>
+
+<a href="{% url 'additional_panel' %}"><button>Дополнительно</button></a>
+
 
 
 <style>

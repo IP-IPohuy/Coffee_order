@@ -1,11 +1,13 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
-from main.models import Order, Product, ProductInOrder
+from main.models import Order, Product, ProductInOrder, Shift
 from django.http import JsonResponse
 from django.utils import timezone
 from .forms import CustomLoginForm
+
+
 
 def display(request):
     orders_in_progress = Order.objects.filter(order_status='in_progress')
@@ -31,7 +33,7 @@ def sign_in(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('worker_panel')  
+                return redirect('startshift')  
         else:
             error = 'Неправильное имя пользователя или пароль'
     else:
@@ -40,9 +42,34 @@ def sign_in(request):
     return render(request, 'main/sign_in.html', {'form': form, 'error': error})
 
 @login_required
+def startshift(request):
+    if request.method == 'POST':
+
+        products = Product.objects.filter(count_type='non-inf')
+        for product in products:
+            stock_value = request.POST.get(f'stock_{product.id}')
+            if stock_value is not None:
+                product.stock = int(stock_value)
+                product.save()
+
+
+        Shift.objects.create(date=timezone.now(), is_active=True)
+
+        return redirect('worker_panel') 
+
+    products = Product.objects.filter(count_type='non-inf')  # Товары с ограниченным количеством
+    return render(request, 'main/startshift.html', {'products': products})
+
+@login_required
 def worker_panel(request):
     orders_in_progress = Order.objects.filter(order_status='in_progress')
     orders_ready = Order.objects.filter(order_status='ready')
+    shift = get_object_or_404(Shift, is_active=True)
+    if request.method == 'POST':
+        shift.is_active = False
+        shift.save()
+
+        return render(request, 'main/end_of_shift.html')
     return render(request, 'main/worker_panel.html', {'orders_in_progress': orders_in_progress, 'orders_ready': orders_ready})
 
 @csrf_exempt
@@ -82,15 +109,18 @@ def orders_history(request):
 def add_order(request):
     if request.method == 'POST':
         order_name = request.POST.get('order_name')
-        products = request.POST.getlist('products')  # Список выбранных продуктов
-        quantities = request.POST.getlist('quantities')  # Список количеств
+        products = request.POST.getlist('products')  
+        quantities = request.POST.getlist('quantities')  
 
-        order = Order(order_name=order_name, user=request.user, order_status='in_progress', time_created=timezone.now())
+        order = Order(order_name=order_name, order_status='in_progress', time_created=timezone.now())
         order.save()
 
         for product_id, quantity in zip(products, quantities):
             product = Product.objects.get(id=product_id)
             product_in_order = ProductInOrder(product=product, quantity=quantity)
+            if product.count_type == 'non-inf':
+                product.stock -= 1
+                product.save()
             product_in_order.save()
             order.order_content.add(product_in_order)
 
@@ -99,3 +129,15 @@ def add_order(request):
 
     products = Product.objects.filter(is_available=True)
     return render(request, 'main/add_order.html', {'products': products})
+
+@login_required
+def additional_panel(request):
+    return render(request, 'main/additional_panel.html')
+
+@login_required
+def add_product(request):
+    product_name = request.POST.get('product_name')  
+    product_price = request.POST.get('product_price')  
+    return render(request, 'main/add_product.html')
+
+

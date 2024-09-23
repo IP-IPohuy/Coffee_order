@@ -14,11 +14,13 @@
     <h4>Выберите товары:</h4>
     <div id="products-container">
         {% for product in products %}
+        {% if product.stock != 0 %}
         <div>
             <label>{{ product.product_name }} ({{ product.product_price }}₽)</label>
             <input type="number" name="quantities" min="1" value="1">
             <input type="checkbox" name="products" value="{{ product.id }}">
         </div>
+        {% endif %}
         {% endfor %}
     </div>
 

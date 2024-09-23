@@ -12,5 +12,7 @@ urlpatterns = [
     path('orders_history', views.orders_history, name='orders_history'),
     path('orders/mark_ready/<int:order_id>/', views.mark_order_ready, name='mark_order_ready'),
     path('orders/add/', views.add_order, name='add_order'),
-
+    path('additional_panel', views.additional_panel, name='additional_panel'),
+    path('add_product', views.add_product, name='add_product'),
+    path('startshift', views.startshift, name='startshift'),
 ]
