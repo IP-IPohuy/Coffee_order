@@ -5,6 +5,9 @@
 {% endblock %}
 
 {% block content %}
+{% if message %}
+<p>{{ message }}</p>
+{% endif %}
 <div class="shift-container">
     <h2>Активная смена от {{ shift.date|date:"d.m.Y" }}</h2>
 
