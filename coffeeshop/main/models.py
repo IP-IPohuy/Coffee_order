@@ -43,7 +43,7 @@ class Order(models.Model):
         return f'Order {self.order_name} ({self.get_order_status_display()})'
 
 class Shift(models.Model):
-    date = models.DateField(default=timezone.now)  
+    date = models.DateField(default=timezone.now, unique=True)  
     orders = models.ManyToManyField(Order, related_name='shifts')  
     is_active = models.BooleanField(default=False)  
 

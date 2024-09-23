@@ -51,26 +51,38 @@ def startshift(request):
             if stock_value is not None:
                 product.stock = int(stock_value)
                 product.save()
-
+        
 
         Shift.objects.create(date=timezone.now(), is_active=True)
 
         return redirect('worker_panel') 
-
+    now = timezone.now()
     products = Product.objects.filter(count_type='non-inf')  # Товары с ограниченным количеством
-    return render(request, 'main/startshift.html', {'products': products})
+    return render(request, 'main/startshift.html', {'products': products, 'now': now})
 
 @login_required
 def worker_panel(request):
+    message = None
     orders_in_progress = Order.objects.filter(order_status='in_progress')
     orders_ready = Order.objects.filter(order_status='ready')
-    shift = get_object_or_404(Shift, is_active=True)
+    try:
+        shift = get_object_or_404(Shift, is_active=True)
+    except:
+        active_shifts = Shift.objects.filter(is_active=True)
+        for shift in active_shifts:
+            if shift.date != timezone.now().date():
+                shift.is_active = False
+                message = f'Смена от {shift.date} не была закрыта.'
+                shift.save()
     if request.method == 'POST':
         shift.is_active = False
         shift.save()
 
         return render(request, 'main/end_of_shift.html')
-    return render(request, 'main/worker_panel.html', {'orders_in_progress': orders_in_progress, 'orders_ready': orders_ready})
+    
+
+    print(message)
+    return render(request, 'main/worker_panel.html', {'orders_in_progress': orders_in_progress, 'orders_ready': orders_ready, 'shift': shift, 'message': message})
 
 @csrf_exempt
 def complete_order(request, order_id):
